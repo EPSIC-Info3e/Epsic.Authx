@@ -2,7 +2,7 @@
 
 namespace Epsic.Authx.Models
 {
-    public class RegistrationRequest
+    public class CreateAccountRequest
     {
         [Required]
         public string Name { get; set; }

@@ -26,15 +26,14 @@ namespace Epsic.Authx.Controllers
 
         [HttpPost]
         [Route("auth/Create")]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> Create([FromBody] RegistrationRequest user)
+        public async Task<IActionResult> Create([FromBody] CreateAccountRequest user)
         {
             var newUser = new IdentityUser {Email = user.Email, UserName = user.Email};
             var isCreated = await _userManager.CreateAsync(newUser, user.Password);
             if (isCreated.Succeeded)
                 return Ok(newUser);
 
-            return BadRequest(new RegistrationResponse
+            return BadRequest(new CreateAccountResponse
             {
                 Result = false,
                 Message = string.Join(Environment.NewLine, isCreated.Errors.Select(x => x.Description).ToList())
@@ -56,7 +55,7 @@ namespace Epsic.Authx.Controllers
                 {
                     var jwtToken = GenerateJwtToken(existingUser);
 
-                    return Ok(new RegistrationResponse
+                    return Ok(new AuthResponse
                     {
                         Result = true,
                         Token = jwtToken
@@ -65,7 +64,7 @@ namespace Epsic.Authx.Controllers
             }
 
             // Nous ne voulons pas donner trop d'informations sur la raison de l'échec de la demande pour des raisons de sécurité.
-            return BadRequest(new RegistrationResponse
+            return BadRequest(new AuthResponse
             {
                 Result = false,
                 Message = "Invalid authentication request"
