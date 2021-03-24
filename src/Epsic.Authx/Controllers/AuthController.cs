@@ -25,21 +25,14 @@ namespace Epsic.Authx.Controllers
         }
 
         [HttpPost]
-        [Route("auth/Register")]
-        public async Task<IActionResult> Register([FromBody] RegistrationRequest user)
+        [Route("auth/Create")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> Create([FromBody] RegistrationRequest user)
         {
             var newUser = new IdentityUser {Email = user.Email, UserName = user.Email};
             var isCreated = await _userManager.CreateAsync(newUser, user.Password);
             if (isCreated.Succeeded)
-            {
-                var jwtToken = GenerateJwtToken(newUser);
-
-                return Ok(new RegistrationResponse
-                {
-                    Result = true,
-                    Token = jwtToken
-                });
-            }
+                return Ok(newUser);
 
             return BadRequest(new RegistrationResponse
             {
@@ -54,7 +47,6 @@ namespace Epsic.Authx.Controllers
         {
             // Vérifier si l'utilisateur avec le même email existe
             var existingUser = await _userManager.FindByEmailAsync(user.Email);
-
             if (existingUser != null)
             {
                 // Maintenant, nous devons vérifier si l'utilisateur a entré le bon mot de passe.

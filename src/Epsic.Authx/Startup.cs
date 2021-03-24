@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text;
 using Epsic.Authx.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -51,7 +52,6 @@ namespace Epsic.Authx
                             }
                         },
                         System.Array.Empty<string>()
-
                     }
                 });
             });
@@ -61,32 +61,32 @@ namespace Epsic.Authx
             services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
 
             services.AddIdentity<IdentityUser, IdentityRole>(options =>
-                {
-                    options.Password.RequiredUniqueChars = 6;
-                    options.Password.RequiredLength = 12;
-                })
-                .AddEntityFrameworkStores<CovidDbContext>();
+            {
+                options.Password.RequiredUniqueChars = 6;
+                options.Password.RequiredLength = 12;
+            })
+            .AddEntityFrameworkStores<CovidDbContext>();
 
             services.AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(jwt =>
-                {
-                    var key = Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]);
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(jwt =>
+            {
+                var key = Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]);
 
-                    jwt.SaveToken = true;
-                    jwt.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        RequireExpirationTime = false,
-                        ValidateLifetime = true
-                    };
-                });
+                jwt.SaveToken = true;
+                jwt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    RequireExpirationTime = false,
+                    ValidateLifetime = true
+                };
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

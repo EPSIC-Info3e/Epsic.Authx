@@ -26,8 +26,16 @@ namespace Epsic.Authx.Controllers
         {
             var testCovid = await _context.TestsCovid.FirstOrDefaultAsync(m => m.Id == id);
             if (testCovid == null) return NotFound();
-
             return Ok(testCovid);
+        }
+
+        // DELETE: testsCovid/E04832F9-6006-4E2F-8816-64E709BE38C0
+        [HttpDelete("testsCovid/{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var testCovid = await _context.TestsCovid.FirstOrDefaultAsync(m => m.Id == id);
+            _context.Remove(testCovid);
+            return NoContent();
         }
 
         // GET: testsCovid
