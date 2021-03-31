@@ -10,4 +10,12 @@ namespace Epsic.Authx.Models
         public bool Resultat { get; set; }
         public TypeTestCovid TypeDeTest { get; set; }
     }
+
+    public class TestCovidDto
+    {
+        public DateTime DateTest { get; set; }
+        public bool Resultat { get; set; }
+        public TypeTestCovid TypeDeTest { get; set; }
+        public Guid User { get; set; }
+    }
 }

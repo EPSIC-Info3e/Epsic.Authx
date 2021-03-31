@@ -73,12 +73,18 @@ namespace Epsic.Authx.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost("testsCovid")]
         [Authorize]
-        public async Task<IActionResult> Create([Bind("DateTest,Resultat,TypeDeTest")] TestCovid testCovid)
+        public async Task<IActionResult> Create(TestCovidDto testCovid)
         {
-            testCovid.Id = Guid.NewGuid();
-            _context.Add(testCovid);
+            var testCovidDb = new TestCovid
+            {
+                Id = Guid.NewGuid(),
+                DateTest = testCovid.DateTest,
+                Resultat = testCovid.Resultat,
+                TypeDeTest = testCovid.TypeDeTest,
+            };
+            _context.Add(testCovidDb);
             await _context.SaveChangesAsync();
-            return Created($"TestsCovid/{testCovid.Id}", testCovid);
+            return Created($"TestsCovid/{testCovidDb.Id}", testCovidDb);
         }
     }
 }
