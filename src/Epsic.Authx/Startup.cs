@@ -93,9 +93,11 @@ namespace Epsic.Authx
             {
                 options.AddPolicy("MedecinOnly", policy => policy.RequireClaim("IsMedecin", "True"));
                 options.AddPolicy("CovidTestPolicy", policy => policy.Requirements.Add(new SamePatientRequirement()));
+                options.AddPolicy("ChuvEmployee", policy => policy.Requirements.Add(new HospitalEmployeeRequirement("chuv.ch")));
             });
 
             services.AddSingleton<IAuthorizationHandler, SamePatientAuthorizationHandler>();
+            services.AddSingleton<IAuthorizationHandler, HospitalEmployeeAuthorizationHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -43,6 +43,7 @@ namespace Epsic.Authx.Controllers
 
         // DELETE: testsCovid/E04832F9-6006-4E2F-8816-64E709BE38C0
         [HttpDelete("testsCovid/{id}")]
+        [Authorize("ChuvEmployee")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var testCovid = await _context.TestsCovid.FirstOrDefaultAsync(m => m.Id == id);
