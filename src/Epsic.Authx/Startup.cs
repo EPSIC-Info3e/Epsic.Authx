@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using System.Text;
+using Epsic.Authx.Authorization;
 using Epsic.Authx.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -92,7 +92,10 @@ namespace Epsic.Authx
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("MedecinOnly", policy => policy.RequireClaim("IsMedecin", "True"));
+                options.AddPolicy("CovidTestPolicy", policy => policy.Requirements.Add(new SamePatientRequirement()));
             });
+
+            services.AddSingleton<IAuthorizationHandler, SamePatientAuthorizationHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

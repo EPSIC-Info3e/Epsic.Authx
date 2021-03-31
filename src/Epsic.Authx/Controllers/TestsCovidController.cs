@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Epsic.Authx.Data;
 using Epsic.Authx.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,20 +14,31 @@ namespace Epsic.Authx.Controllers
     public class TestsCovidController : ControllerBase
     {
         private readonly CovidDbContext _context;
+        public readonly UserManager<IdentityUser> _userManager;
+        private readonly IAuthorizationService _authorizationService;
 
-        public TestsCovidController(CovidDbContext context)
+        public TestsCovidController(CovidDbContext context, UserManager<IdentityUser> userManager, IAuthorizationService authorizationService)
         {
+            _authorizationService = authorizationService;
+            _userManager = userManager;
             _context = context;
         }
-
 
         // GET: testsCovid/E04832F9-6006-4E2F-8816-64E709BE38C0
         [HttpGet("testsCovid/{id}")]
         public async Task<IActionResult> Details(Guid id)
         {
-            var testCovid = await _context.TestsCovid.FirstOrDefaultAsync(m => m.Id == id);
-            if (testCovid == null) return NotFound();
-            return Ok(testCovid);
+            var testCovid = await _context.TestsCovid.Include(t => t.User).FirstOrDefaultAsync(m => m.Id == id);
+
+            if (testCovid == null) 
+                return NotFound();
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, testCovid, "CovidTestPolicy");
+
+            if (authorizationResult.Succeeded)
+                return Ok(testCovid);
+            else
+                return Forbid();
         }
 
         // DELETE: testsCovid/E04832F9-6006-4E2F-8816-64E709BE38C0
@@ -81,6 +93,7 @@ namespace Epsic.Authx.Controllers
                 DateTest = testCovid.DateTest,
                 Resultat = testCovid.Resultat,
                 TypeDeTest = testCovid.TypeDeTest,
+                User = await _userManager.FindByIdAsync(testCovid.User.ToString())
             };
             _context.Add(testCovidDb);
             await _context.SaveChangesAsync();
