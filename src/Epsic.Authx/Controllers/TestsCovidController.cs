@@ -72,7 +72,7 @@ namespace Epsic.Authx.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost("testsCovid")]
-        [Authorize]
+        [Authorize("MedecinOnly")]
         public async Task<IActionResult> Create(TestCovidDto testCovid)
         {
             var testCovidDb = new TestCovid

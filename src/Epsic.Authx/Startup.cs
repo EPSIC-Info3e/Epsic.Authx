@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Text;
 using Epsic.Authx.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -86,6 +87,11 @@ namespace Epsic.Authx
                     RequireExpirationTime = false,
                     ValidateLifetime = true
                 };
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("MedecinOnly", policy => policy.RequireClaim("IsMedecin", "True"));
             });
         }
 

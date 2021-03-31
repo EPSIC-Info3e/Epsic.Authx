@@ -14,6 +14,9 @@ namespace Epsic.Authx.Models
         public string Password { get; set; }
 
         [Required]
+        public bool IsMedecin { get; set; }
+
+        [Required]
         public bool IsAdmin { get; set; }
     }
 }
